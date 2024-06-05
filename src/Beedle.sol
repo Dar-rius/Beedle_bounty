@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import {Ownable} from "./utils/Ownable.sol";
 import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import {ERC20Permit} from "openzeppelin-contracts/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
+import {ERC20Permit} from "openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {ERC20Votes} from "openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
@@ -12,6 +12,9 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
         _mint(msg.sender, 1_000_000_000 * 1e18);
     }
 
+    /*
+       Probleme: la fonction _afterTokenTransfer ne se retrouve pas dans les contrats (ERC20, ERC20Votes)
+    */
     function _afterTokenTransfer(address from, address to, uint256 amount)
         internal
         override(ERC20, ERC20Votes)
