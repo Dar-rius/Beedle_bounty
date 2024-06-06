@@ -1,4 +1,19 @@
 // SPDX-License-Identifier: MIT
+/*
+    Ce contrat est un catastrophe:
+    1. Il utilise des structures de donnees et des erreurs qui sont
+        qui sont pas lie au contrat Lender.
+
+    2. Les fonction qui retourne normalement des donnees n'utilise 
+       pas view lors du retour.
+       (setPool)
+    
+    3. Les fonctions qui retourne en tant normal une valeur ne retourne
+       rien en realite
+
+    4. grosse gaspillage de gaz pour des verification inutile
+    
+*/
 pragma solidity ^0.8.19;
 
 import "./utils/Errors.sol";
@@ -131,11 +146,21 @@ contract Lender is Ownable {
     /*                        BASIC LOANS                         */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
+    /// cette fonction permet de mettre a jour la balance de la Pool
+    /// en augmentant ou en reduisant la valeur de la balance
     /// @notice set the info for a pool
     /// updates pool info for msg.sender
     /// @param p the new pool info
-    /// Probleme: la premiere condition consomme enormement de gaz
+    /*Probleme: la premiere condition consomme enormement de gaz
+        Un moyen de pouvoir checker si la pool existe deja serai:
+        verifier de puis PoolId si ca existe
+        cela reduira la consommation de gaz.
+        certaines verification sont clairement inutile
+        Probleme avec le paramettre p, car il y pas de fonction attribuer
+        des valeurs a la structure Pool
+    */
     function setPool(Pool calldata p) public returns (bytes32 poolId) {
+        //Inutile
         // validate the pool
         if (
             p.lender != msg.sender ||
@@ -149,6 +174,7 @@ contract Lender is Ownable {
         // check if they already have a pool balance
         poolId = getPoolId(p.lender, p.loanToken, p.collateralToken);
 
+        //Inutile
         // you can't change the outstanding loans
         if (p.outstandingLoans != pools[poolId].outstandingLoans)
             revert PoolConfig();
@@ -179,10 +205,10 @@ contract Lender is Ownable {
             // if the pool does exist then update it
             emit PoolUpdated(poolId, p);
         }
-
         pools[poolId] = p;
     }
 
+    /// Ajoute une balance a la pool
     /// @notice add to the pool balance
     /// can only be called by the pool lender
     /// @param poolId the id of the pool to add to
@@ -199,6 +225,7 @@ contract Lender is Ownable {
         );
     }
 
+    /// Reduit la valeur de la balance de la pool
     /// @notice remove from the pool balance
     /// can only be called by the pool lender
     /// @param poolId the id of the pool to remove from
@@ -237,6 +264,16 @@ contract Lender is Ownable {
     /// can be called by anyone
     /// you are allowed to open many borrows at once
     /// @param borrows a struct of all desired debt positions to be opened
+    /* 
+        probleme: ou est que l'utilisateur peut remplir les donnees
+        pour la structure de donnees Loan, et comment le tableau 
+        peut avoir des donnees peut avoir des donnees et encore 
+        l'utilisateur risque bien d'ecraser les donnees sur
+        les precedent dettes et les precedents personnes endetter
+        n'auront plus besoin de payer leur dettes
+
+        La boucle ne pourrais potentiellemenrt pas passe
+    */
     function borrow(Borrow[] calldata borrows) public {
         for (uint256 i = 0; i < borrows.length; i++) {
             bytes32 poolId = borrows[i].poolId;
@@ -302,6 +339,8 @@ contract Lender is Ownable {
             uint256 loanId = loanIds[i];
             // get the loan info
             Loan memory loan = loans[loanId];
+
+            // MAUAVAIS CALCUL
             // calculate the interest
             (
                 uint256 lenderInterest,
@@ -381,6 +420,7 @@ contract Lender is Ownable {
             if (pool.interestRate > loan.interestRate) revert RateTooHigh();
             // auction length cannot be shorter than old auction length
             if (pool.auctionLength < loan.auctionLength) revert AuctionTooShort();
+            //MAUVAIS CALCUL
             // calculate the interest
             (
                 uint256 lenderInterest,
@@ -476,14 +516,18 @@ contract Lender is Ownable {
         // validate the loan
         if (loan.auctionStartTimestamp == type(uint256).max)
             revert AuctionNotStarted();
+
+        //Pourquoi ?
         if (block.timestamp > loan.auctionStartTimestamp + loan.auctionLength)
             revert AuctionEnded();
         // calculate the current interest rate
         uint256 timeElapsed = block.timestamp - loan.auctionStartTimestamp;
-        uint256 currentAuctionRate = (MAX_INTEREST_RATE * timeElapsed) /
-            loan.auctionLength;
+        uint256 currentAuctionRate = (MAX_INTEREST_RATE * timeElapsed) / loan.auctionLength;
+
+        //A etudie
         // validate the rate
         if (pools[poolId].interestRate > currentAuctionRate) revert RateTooHigh();
+
         // calculate the interest
         (uint256 lenderInterest, uint256 protocolInterest) = _calculateInterest(
             loan
@@ -550,6 +594,7 @@ contract Lender is Ownable {
         buyLoan(loanId, poolId);
     }
 
+    /// Probleme le fait que n'importe peut appeller cette fonction peut causer probleme
     /// @notice sieze a loan after a failed refinance auction
     /// can be called by anyone
     /// @param loanIds the ids of the loans to sieze
@@ -725,6 +770,13 @@ contract Lender is Ownable {
     /// @param l the loan to calculate for
     /// @return interest the interest accrued
     /// @return fees the fees accrued
+    /*
+        Les valeurs de retours sont mal donnees dans la donnees,
+        la fonction retourne un tuple de data et avec un emplacement
+        bien precis, dans la fonction rien n'est respecte.
+
+        Ces consequences sont grave car elle fausse les calculs
+    */
     function _calculateInterest(
         Loan memory l
     ) internal view returns (uint256 interest, uint256 fees) {
