@@ -12,6 +12,8 @@
        rien en realite
 
     4. grosse gaspillage de gaz pour des verification inutile
+
+    5. Le lancement de refinancement est mal fait car: la creation de refinancemet
     
 */
 pragma solidity ^0.8.19;
@@ -273,6 +275,7 @@ contract Lender is Ownable {
         n'auront plus besoin de payer leur dettes
 
         La boucle ne pourrais potentiellemenrt pas passe
+     Probleme: reetrancuy
     */
     function borrow(Borrow[] calldata borrows) public {
         for (uint256 i = 0; i < borrows.length; i++) {
@@ -334,6 +337,7 @@ contract Lender is Ownable {
     /// @notice repay a loan
     /// can be called by anyone
     /// @param loanIds the ids of the loans to repay
+    /// Probleme: reetrancuy
     function repay(uint256[] calldata loanIds) public {
         for (uint256 i = 0; i < loanIds.length; i++) {
             uint256 loanId = loanIds[i];
@@ -595,6 +599,7 @@ contract Lender is Ownable {
     }
 
     /// Probleme le fait que n'importe peut appeller cette fonction peut causer probleme
+    /// reetrancy
     /// @notice sieze a loan after a failed refinance auction
     /// can be called by anyone
     /// @param loanIds the ids of the loans to sieze
@@ -638,6 +643,7 @@ contract Lender is Ownable {
         }
     }
 
+    /// Probleme: Fonction potentiellement mal faites
     /// @notice refinance a loan to a new offer
     /// can only be called by the borrower
     /// @param refinances a struct of all desired debt positions to be refinanced
