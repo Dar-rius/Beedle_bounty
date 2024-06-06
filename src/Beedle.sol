@@ -22,6 +22,9 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
         super._afterTokenTransfer(from, to, amount);
     }
 
+    /*
+        Probleme: le contrat ERC20Votes ne dispose pas de sous fonction _mint
+    */
     function _mint(address to, uint256 amount)
         internal
         override(ERC20, ERC20Votes)
@@ -29,6 +32,9 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
         super._mint(to, amount);
     }
 
+    /*
+        Probleme: le contrat ERC20Votes ne dispose pas de sous fonction _burn
+    */
     function _burn(address account, uint256 amount)
         internal
         override(ERC20, ERC20Votes)

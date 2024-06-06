@@ -66,8 +66,10 @@ contract Lender is Ownable {
     /// @notice the address of the fee receiver
     address public feeReceiver;
 
+    //Existance d'une Structure de donnees Pool et Loarn
     /// @notice mapping of poolId to Pool (poolId is keccak256(lender, loanToken, collateralToken))
     mapping(bytes32 => Pool) public pools;
+    // liste d'objet de la structure Loan
     Loan[] public loans;
 
     constructor() Ownable(msg.sender) {
@@ -105,6 +107,9 @@ contract Lender is Ownable {
     /*                         LOAN INFO                          */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
+    //Genere les infos de la nouvelle de pret en cryptant et encodant les donnees suivantes:
+    // (lender, loanToken et collaterealToken)
+    // Problem: Don't return poolId, and type memory of poolId don't given
     function getPoolId(
         address lender,
         address loanToken,
@@ -113,6 +118,8 @@ contract Lender is Ownable {
         poolId = keccak256(abi.encode(lender, loanToken, collateralToken));
     }
 
+    // debit du pret
+    //Existance d'une structure de donnees Loan
     function getLoanDebt(uint256 loanId) external view returns (uint256 debt) {
         Loan memory loan = loans[loanId];
         // calculate the accrued interest
@@ -127,6 +134,7 @@ contract Lender is Ownable {
     /// @notice set the info for a pool
     /// updates pool info for msg.sender
     /// @param p the new pool info
+    /// Probleme: la premiere condition consomme enormement de gaz
     function setPool(Pool calldata p) public returns (bytes32 poolId) {
         // validate the pool
         if (

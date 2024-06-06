@@ -21,6 +21,7 @@ contract Fees {
         staking = _staking;
     }
 
+    // Potentiellement une erreur du au fait que l'ensemble de la balance de l'utilisateur est utilise pour le collateral.
     /// @notice swap loan tokens for collateral tokens from liquidations
     /// @param _profits the token to swap for WETH
     function sellProfits(address _profits) public {

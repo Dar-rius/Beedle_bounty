@@ -5,6 +5,7 @@ abstract contract Ownable {
 
     event OwnershipTransferred(address indexed user, address indexed newOwner);
 
+    // Probleme: La variable owner ne devrait pas etre public en risque de manipulation
     address public owner;
 
     modifier onlyOwner() virtual {
