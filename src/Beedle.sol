@@ -14,6 +14,7 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
 
     /*
        Probleme: la fonction _afterTokenTransfer ne se retrouve pas dans les contrats (ERC20, ERC20Votes)
+       Consequence: la fonctione ne fonctionnera pas
     */
     function _afterTokenTransfer(address from, address to, uint256 amount)
         internal

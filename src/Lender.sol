@@ -337,7 +337,8 @@ contract Lender is Ownable {
     /// @notice repay a loan
     /// can be called by anyone
     /// @param loanIds the ids of the loans to repay
-    /// Probleme: reetrancuy
+    /// Probleme: Le repay doit etre effectue par le Borrower,
+    /// avec cette fonction le lender peut oblige faire l'appel expres
     function repay(uint256[] calldata loanIds) public {
         for (uint256 i = 0; i < loanIds.length; i++) {
             uint256 loanId = loanIds[i];
