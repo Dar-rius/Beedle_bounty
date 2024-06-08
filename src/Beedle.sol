@@ -13,8 +13,7 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
     }
 
     /*
-       Probleme: la fonction _afterTokenTransfer ne se retrouve pas dans les contrats (ERC20, ERC20Votes)
-       Consequence: la fonctione ne fonctionnera pas
+       Probleme: la fonction _afterTokenTransfer ne se trouve aucun des contrat dont il est override (ERC20, ERC20Votes), ceci causera une erreur dans le programme
     */
     function _afterTokenTransfer(address from, address to, uint256 amount)
         internal
@@ -24,7 +23,7 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
     }
 
     /*
-        Probleme: le contrat ERC20Votes ne dispose pas de sous fonction _mint
+        Probleme: le contrat ERC20Votes ne dispose pas de sous fonction  appelle _mint et cette fonction n'est pas virtual sur le contrat ERC20
     */
     function _mint(address to, uint256 amount)
         internal
@@ -34,7 +33,7 @@ contract Beedle is Ownable, ERC20, ERC20Permit, ERC20Votes {
     }
 
     /*
-        Probleme: le contrat ERC20Votes ne dispose pas de sous fonction _burn
+        Probleme: le contrat ERC20Votes ne dispose pas de sous fonction _burn et la fonction n'est pas virtuel dans le contrat ERC20
     */
     function _burn(address account, uint256 amount)
         internal
