@@ -8,11 +8,12 @@ abstract contract Ownable {
     // Probleme: La variable owner ne devrait pas etre public en risque de manipulation
     address public owner;
 
-    // Probleme: risque  d'etre remplacer par un contrat malveillant
+    // pas de probleme, juste retirer virtual de la fonction
     modifier onlyOwner() virtual {
         require(msg.sender == owner, "UNAUTHORIZED");
         _;
     }
+
     constructor(address _owner) {
         owner = _owner;
         emit OwnershipTransferred(address(0), _owner);
