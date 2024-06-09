@@ -8,6 +8,7 @@ abstract contract Ownable {
     // Probleme: La variable owner ne devrait pas etre public en risque de manipulation
     address public owner;
 
+    // Probleme: risque  d'etre remplacer par un contrat malveillant
     modifier onlyOwner() virtual {
         require(msg.sender == owner, "UNAUTHORIZED");
         _;

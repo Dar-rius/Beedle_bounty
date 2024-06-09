@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+
+/*** pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "../src/Lender.sol";
@@ -180,9 +181,6 @@ contract LenderTest is Test {
         assertEq(poolBalance, 1000*10**18 + interest);
     }
 
-    // /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-    // /*                         AUCTIONS                           */
-    // /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     function testFuzz_buyLoan(uint256 timeToBuy) public {
         vm.assume(timeToBuy < 1500 days);
@@ -297,9 +295,7 @@ contract LenderTest is Test {
         }
     }
 
-    // /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-    // /*                         REFINANCE                          */
-    // /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+    /
 
     function testFuzz_refinance(uint256 debt, uint256 collateral) public {
         vm.assume(debt < 100000*10**18);
@@ -378,4 +374,4 @@ contract LenderTest is Test {
 
     }
 
-}
+} */

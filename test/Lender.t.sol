@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
+/***
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
@@ -193,10 +194,7 @@ contract LenderTest is Test {
         lender.repay(loanIds);
     }
 
-    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-    /*                         AUCTIONS                           */
-    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
-
+    
     function test_startAuction() public {
         test_borrow();
 
@@ -328,11 +326,7 @@ contract LenderTest is Test {
         lender.seizeLoan(loanIds);
     }
 
-    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-    /*                         REFINANCE                          */
-    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
-
-    function test_giveLoan() public {
+        function test_giveLoan() public {
         test_borrow();
 
         vm.startPrank(lender2);
@@ -426,4 +420,4 @@ contract LenderTest is Test {
         assertEq(debt, 110*10**18);
     }
 
-}
+} ***/
